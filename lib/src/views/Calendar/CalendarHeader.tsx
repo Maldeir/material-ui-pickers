@@ -12,14 +12,18 @@ import { ArrowRightIcon } from '../../_shared/icons/ArrowRightIcon';
 
 export interface CalendarHeaderProps {
   currentMonth: DateType;
+  currentYear: DateType;
   leftArrowIcon?: React.ReactNode;
   rightArrowIcon?: React.ReactNode;
   leftArrowButtonProps?: Partial<IconButtonProps>;
   rightArrowButtonProps?: Partial<IconButtonProps>;
   disablePrevMonth?: boolean;
   disableNextMonth?: boolean;
+  disablePrevYear?: boolean;
+  disableNextYear?: boolean;
   slideDirection: SlideDirection;
   onMonthChange: (date: MaterialUiPickersDate, direction: SlideDirection) => void | Promise<void>;
+  onYearChange: (date: MaterialUiPickersDate, direction: SlideDirection) => void | Promise<void>;
 }
 
 export const useStyles = makeStyles(
@@ -58,13 +62,17 @@ export const useStyles = makeStyles(
 
 export const CalendarHeader: React.SFC<CalendarHeaderProps> = ({
   currentMonth,
+  currentYear,
   onMonthChange,
+  onYearChange,
   leftArrowIcon,
   rightArrowIcon,
   leftArrowButtonProps,
   rightArrowButtonProps,
   disablePrevMonth,
   disableNextMonth,
+  disablePrevYear,
+  disableNextYear,
   slideDirection,
 }) => {
   const utils = useUtils();
@@ -74,6 +82,9 @@ export const CalendarHeader: React.SFC<CalendarHeaderProps> = ({
 
   const selectNextMonth = () => onMonthChange(utils.getNextMonth(currentMonth), 'left');
   const selectPreviousMonth = () => onMonthChange(utils.getPreviousMonth(currentMonth), 'right');
+
+  const selectNextYear = () => onYearChange(utils.getNextYear(currentYear), 'left');
+  const selectPreviousYear = () => onYearChange(utils.getPreviousYear(currentYear), 'right');
 
   return (
     <div>
@@ -107,6 +118,35 @@ export const CalendarHeader: React.SFC<CalendarHeaderProps> = ({
         </IconButton>
       </div>
 
+      <div className={classes.switchHeader}>
+        <IconButton
+          {...leftArrowButtonProps}
+          disabled={disablePrevYear}
+          onClick={selectPreviousYear}
+          className={classes.iconButton}
+        >
+          {rtl ? rightArrowIcon : leftArrowIcon}
+        </IconButton>
+
+        <SlideTransition
+          slideDirection={slideDirection}
+          transKey={currentYear.toString()}
+          className={classes.transitionContainer}
+        >
+          <Typography align="center" variant="body1">
+            {utils.getCalendarHeaderText(currentYear)}
+          </Typography>
+        </SlideTransition>
+
+        <IconButton
+          {...rightArrowButtonProps}
+          disabled={disableNextYear}
+          onClick={selectNextYear}
+          className={classes.iconButton}
+        >
+          {rtl ? leftArrowIcon : rightArrowIcon}
+        </IconButton>
+      </div>
       <div className={classes.daysHeader}>
         {utils.getWeekdays().map((day, index) => (
           <Typography

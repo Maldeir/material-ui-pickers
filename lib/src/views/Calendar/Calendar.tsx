@@ -69,6 +69,7 @@ export interface CalendarProps
 export interface CalendarState {
   slideDirection: SlideDirection;
   currentMonth: MaterialUiPickersDate;
+  currentYear: MaterialUiPickersDate;
   lastDate?: MaterialUiPickersDate;
   loadingQueue: number;
 }
@@ -106,10 +107,11 @@ export class Calendar extends React.Component<CalendarProps, CalendarState> {
       const nextMonth = utils.getMonth(nextDate);
       const lastDate = state.lastDate || nextDate;
       const lastMonth = utils.getMonth(lastDate);
-
+      const year = utils.getYear(nextDate);
       return {
         lastDate: nextDate,
         currentMonth: nextProps.utils.startOfMonth(nextDate),
+        currentYear: nextProps.utils.getCurrentYear(nextDate),
         // prettier-ignore
         slideDirection: nextMonth === lastMonth
           ? state.slideDirection
@@ -125,6 +127,7 @@ export class Calendar extends React.Component<CalendarProps, CalendarState> {
   state: CalendarState = {
     slideDirection: 'left',
     currentMonth: this.props.utils.startOfMonth(this.props.date),
+    currentYear: this.props.utils.getCurrentYear(this.props.date),
     loadingQueue: 0,
   };
 
@@ -292,7 +295,7 @@ export class Calendar extends React.Component<CalendarProps, CalendarState> {
   };
 
   render() {
-    const { currentMonth, slideDirection } = this.state;
+    const { currentMonth, slideDirection, currentYear } = this.state;
     const {
       classes,
       allowKeyboardControl,
@@ -310,8 +313,10 @@ export class Calendar extends React.Component<CalendarProps, CalendarState> {
 
         <CalendarHeader
           currentMonth={currentMonth!}
+          currentYear={currentYear!}
           slideDirection={slideDirection}
           onMonthChange={this.handleChangeMonth}
+          onYearChange={this.handleChangeMonth}
           leftArrowIcon={leftArrowIcon}
           leftArrowButtonProps={leftArrowButtonProps}
           rightArrowIcon={rightArrowIcon}
